@@ -22,11 +22,40 @@ class MyApp extends StatelessWidget {
             highlightElevation: 0,
           )),
       home: MainScreen(),
+      routes: {
+        '/food': (ctx) => DetailScreen(),
+      },
+    );
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    return Scaffold(
+      appBar: AppBar(
+        title: Image.asset('assets/app_logo.png'),
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.chevron_left),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: Container(
+        child: Center(
+          child: Text("${args['detail']}"),
+        ),
+      ),
     );
   }
 }
 
 class MainScreen extends StatelessWidget {
+  final _text = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +63,7 @@ class MainScreen extends StatelessWidget {
         title: Image.asset('assets/app_logo.png'),
         elevation: 0,
       ),
+      resizeToAvoidBottomInset: false,
       body: Column(children: [
         Container(
           color: Color(0xFFFFF9F6),
@@ -44,6 +74,13 @@ class MainScreen extends StatelessWidget {
                   data: Theme.of(context)
                       .copyWith(splashColor: Colors.transparent),
                   child: TextField(
+                    onEditingComplete: () {
+                      Navigator.of(context).pushNamed('/food',
+                          arguments: {'detail': _text.text});
+                      _text.text = '';
+                      FocusScope.of(context).unfocus();
+                    },
+                    controller: _text,
                     autofocus: false,
                     style: TextStyle(fontSize: 20.0, color: Color(0xFF8B8B8B)),
                     decoration: InputDecoration(
@@ -87,6 +124,8 @@ class MainScreen extends StatelessWidget {
                           trailing: Icon(Icons.chevron_right),
                           onTap: () {
                             print(index);
+                            Navigator.of(context).pushNamed('/food',
+                                arguments: {'detail': "$index"});
                           },
                         ),
                     separatorBuilder: (ctx, index) => Divider(),
