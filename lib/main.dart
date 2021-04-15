@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(MyApp());
@@ -56,6 +60,27 @@ class DetailScreen extends StatelessWidget {
 
 class MainScreen extends StatelessWidget {
   final _text = TextEditingController();
+  final ImagePicker imagePicker = ImagePicker();
+
+  void predict(PickedFile image, BuildContext context) async {
+    final bytes = await image.readAsBytes();
+    String base64 = base64Encode(bytes);
+    try {
+      final response =
+          await Dio().post('https://foodai.org/v1/classify', data: {
+        "image_url": 'data:image/jpeg;base64,' + base64,
+        "num_tag": 1,
+        "uid": "smu_admin"
+      });
+      String result = response.data["food_results"][0][0] as String;
+      result = result.split('(')[0].trim();
+      print(result);
+      Navigator.of(context).pushNamed('/food', arguments: {'detail': result});
+    } on DioError catch (error) {
+      print(error.response!.data);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,7 +164,57 @@ class MainScreen extends StatelessWidget {
       ]),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              barrierColor: Colors.transparent,
+              builder: (ctx) => Container(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ElevatedButton.icon(
+                                  onPressed: () async {
+                                    final _pickedImage =
+                                        await imagePicker.getImage(
+                                      source: ImageSource.camera,
+                                      imageQuality: 70,
+                                      maxWidth: 600,
+                                      maxHeight: 500,
+                                    );
+                                    if (_pickedImage != null) {
+                                      predict(_pickedImage, context);
+                                    }
+                                  },
+                                  icon: Icon(Icons.camera_alt),
+                                  label: Text("Take a photo"))
+                            ]),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ElevatedButton.icon(
+                                  onPressed: () async {
+                                    final _pickedImage =
+                                        await imagePicker.getImage(
+                                      source: ImageSource.gallery,
+                                      imageQuality: 70,
+                                      maxWidth: 600,
+                                      maxHeight: 500,
+                                    );
+                                    if (_pickedImage != null) {
+                                      predict(_pickedImage, context);
+                                    }
+                                  },
+                                  icon: Icon(Icons.photo_library),
+                                  label: Text("Select from library"))
+                            ])
+                      ],
+                    ),
+                    height: 150,
+                  ));
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );

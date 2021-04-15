@@ -22,6 +22,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>We want access to camera in order to let you attach image with symptoms.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We want access to photo library in order to let you attach image with symptoms and make QRCode scanning work.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
