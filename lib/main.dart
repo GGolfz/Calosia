@@ -51,7 +51,7 @@ class DetailScreen extends StatelessWidget {
       ),
       body: Container(
         child: Center(
-          child: Text("${args['detail']}"),
+          child: Text('${args['detail']}'),
         ),
       ),
     );
@@ -61,21 +61,41 @@ class DetailScreen extends StatelessWidget {
 class MainScreen extends StatelessWidget {
   final _text = TextEditingController();
   final ImagePicker imagePicker = ImagePicker();
-
+  final List<String> foodList = <String>[
+    'Apple',
+    'Apple pie',
+    'Bacon',
+    'Banana',
+    'Beef burger',
+    'Bingsu',
+    'Carbonara',
+    'Fried rice',
+    'Pizza'
+  ];
   void predict(PickedFile image, BuildContext context) async {
     final bytes = await image.readAsBytes();
     String base64 = base64Encode(bytes);
     try {
       final response =
           await Dio().post('https://foodai.org/v1/classify', data: {
-        "image_url": 'data:image/jpeg;base64,' + base64,
-        "num_tag": 1,
-        "uid": "smu_admin"
+        'image_url': 'data:image/jpeg;base64,' + base64,
+        'num_tag': 1,
+        'uid': 'smu_admin'
       });
-      String result = response.data["food_results"][0][0] as String;
+      String result = response.data['food_results'][0][0] as String;
       result = result.split('(')[0].trim();
       print(result);
-      Navigator.of(context).pushNamed('/food', arguments: {'detail': result});
+      if (foodList.indexOf(result) != -1) {
+        Navigator.of(context).pushNamed('/food', arguments: {'detail': result});
+      } else {
+        showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('Sorry for inconvenience'),
+                  content:
+                      Text("We don't have the information of this food now."),
+                ));
+      }
     } on DioError catch (error) {
       print(error.response!.data);
     }
@@ -144,13 +164,13 @@ class MainScreen extends StatelessWidget {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(25))),
                           ),
-                          title: Text("Food $index"),
-                          subtitle: Text("300 kcals"),
+                          title: Text('Food $index'),
+                          subtitle: Text('300 kcals'),
                           trailing: Icon(Icons.chevron_right),
                           onTap: () {
                             print(index);
                             Navigator.of(context).pushNamed('/food',
-                                arguments: {'detail': "$index"});
+                                arguments: {'detail': '$index'});
                           },
                         ),
                     separatorBuilder: (ctx, index) => Divider(),
@@ -189,7 +209,7 @@ class MainScreen extends StatelessWidget {
                                     }
                                   },
                                   icon: Icon(Icons.camera_alt),
-                                  label: Text("Take a photo"))
+                                  label: Text('Take a photo'))
                             ]),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -208,7 +228,7 @@ class MainScreen extends StatelessWidget {
                                     }
                                   },
                                   icon: Icon(Icons.photo_library),
-                                  label: Text("Select from library"))
+                                  label: Text('Select from library'))
                             ])
                       ],
                     ),
