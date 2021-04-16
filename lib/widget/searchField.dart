@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class SearchField extends StatelessWidget {
   final text;
   final onSearch;
@@ -12,12 +13,12 @@ class SearchField extends StatelessWidget {
           child: TextField(
             onEditingComplete: () {
               onSearch(text.text);
-              text.text = '';
               FocusScope.of(context).unfocus();
             },
+            textAlignVertical: TextAlignVertical.center,
             controller: text,
             autofocus: false,
-            style: TextStyle(fontSize: 20.0, color: Color(0xFF8B8B8B)),
+            style: TextStyle(fontSize: 16.0, color: Color(0xFF8B8B8B)),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -40,4 +41,3 @@ class SearchField extends StatelessWidget {
         ));
   }
 }
-
