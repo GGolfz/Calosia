@@ -1,12 +1,26 @@
+import 'package:calosia/provider/foodProvider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
   final _text = TextEditingController();
+
   final ImagePicker imagePicker = ImagePicker();
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<FoodProvider>(context, listen: false).fetchFood();
+  }
+
   final List<String> foodList = <String>[
     'Apple',
     'Apple pie',
@@ -18,6 +32,7 @@ class MainScreen extends StatelessWidget {
     'Fried rice',
     'Pizza'
   ];
+
   void predict(PickedFile image, BuildContext context) async {
     final bytes = await image.readAsBytes();
     String base64 = base64Encode(bytes);
@@ -51,49 +66,13 @@ class MainScreen extends StatelessWidget {
     showModalBottomSheet(
         context: context,
         barrierColor: Colors.transparent,
-        builder: (ctx) => Container(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    ElevatedButton.icon(
-                        onPressed: () async {
-                          final _pickedImage = await imagePicker.getImage(
-                            source: ImageSource.camera,
-                            imageQuality: 70,
-                            maxWidth: 600,
-                            maxHeight: 500,
-                          );
-                          if (_pickedImage != null) {
-                            predict(_pickedImage, context);
-                          }
-                        },
-                        icon: Icon(Icons.camera_alt),
-                        label: Text('Take a photo'))
-                  ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    ElevatedButton.icon(
-                        onPressed: () async {
-                          final _pickedImage = await imagePicker.getImage(
-                            source: ImageSource.gallery,
-                            imageQuality: 70,
-                            maxWidth: 600,
-                            maxHeight: 500,
-                          );
-                          if (_pickedImage != null) {
-                            predict(_pickedImage, context);
-                          }
-                        },
-                        icon: Icon(Icons.photo_library),
-                        label: Text('Select from library'))
-                  ])
-                ],
-              ),
-              height: 150,
-            ));
+        builder: (ctx) =>
+            BottomSheet(imagePicker: imagePicker, predict: predict));
   }
 
-  void onSearch(String searchVal) {}
+  void onSearch(String searchVal) {
+    Provider.of<FoodProvider>(context, listen: false).searchFood(searchVal);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,13 +89,17 @@ class MainScreen extends StatelessWidget {
             SearchField(text: _text, onSearch: onSearch),
             Container(
                 height: 600,
-                child: ListView.separated(
-                    itemBuilder: (ctx, index) => FoodTile(
-                        name: 'Food $index',
-                        imgURL: '$index',
-                        calories: '${index * 200}'),
-                    separatorBuilder: (ctx, index) => Divider(),
-                    itemCount: 10))
+                child: Consumer<FoodProvider>(
+                    builder: (ctx, foods, _) => ListView.separated(
+                        itemBuilder: (ctx, index) {
+                          Food food = foods.foodList[index];
+                          return FoodTile(
+                              name: food.name,
+                              imgURL: food.imgURL,
+                              calories: food.calories);
+                        },
+                        separatorBuilder: (ctx, index) => Divider(),
+                        itemCount: foods.foodList.length)))
           ]),
           height: MediaQuery.of(context).size.height * 0.8,
         ),
@@ -178,9 +161,9 @@ class SearchField extends StatelessWidget {
 }
 
 class FoodTile extends StatelessWidget {
-  String name;
-  String imgURL;
-  String calories;
+  final String name;
+  final String imgURL;
+  final double calories;
   FoodTile({required this.name, required this.imgURL, required this.calories});
   @override
   Widget build(BuildContext context) {
@@ -202,6 +185,56 @@ class FoodTile extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pushNamed('/food', arguments: {'detail': name});
       },
+    );
+  }
+}
+
+class BottomSheet extends StatelessWidget {
+  final imagePicker;
+  final predict;
+  BottomSheet({required this.imagePicker, required this.predict});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            ElevatedButton.icon(
+                onPressed: () async {
+                  final _pickedImage = await imagePicker.getImage(
+                    source: ImageSource.camera,
+                    imageQuality: 70,
+                    maxWidth: 600,
+                    maxHeight: 500,
+                  );
+                  if (_pickedImage != null) {
+                    predict(_pickedImage, context);
+                  }
+                },
+                icon: Icon(Icons.camera_alt),
+                label: Text('Take a photo'))
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            ElevatedButton.icon(
+                onPressed: () async {
+                  final _pickedImage = await imagePicker.getImage(
+                    source: ImageSource.gallery,
+                    imageQuality: 70,
+                    maxWidth: 600,
+                    maxHeight: 500,
+                  );
+                  if (_pickedImage != null) {
+                    predict(_pickedImage, context);
+                  }
+                },
+                icon: Icon(Icons.photo_library),
+                label: Text('Select from library'))
+          ])
+        ],
+      ),
+      height: 150,
     );
   }
 }
