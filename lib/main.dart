@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<FoodProvider>(
-      create: (ctx) => FoodProvider(foodList: []),
+      create: (ctx) => FoodProvider(foodList: [], selectedFood: Food.init),
       child: MaterialApp(
         title: 'Calosia',
         theme: ThemeData(

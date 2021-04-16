@@ -15,14 +15,19 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  @override
+  void initState() {
+    fetchFood();
+    super.initState();
+  }
+
+  void fetchFood() async {
+    await Provider.of<FoodProvider>(context, listen: false).fetchFood();
+  }
+
   final _text = TextEditingController();
 
   final ImagePicker imagePicker = ImagePicker();
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<FoodProvider>(context, listen: false).fetchFood();
-  }
 
   final List<String> foodList = <String>[
     'Apple',
@@ -75,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
             CustomBottomSheet(imagePicker: imagePicker, predict: predict));
   }
 
-  void onSearch(String searchVal) {
+  void onSearch(String searchVal, BuildContext context) {
     Provider.of<FoodProvider>(context, listen: false).searchFood(searchVal);
   }
 
@@ -91,7 +96,7 @@ class _MainScreenState extends State<MainScreen> {
         Container(
           color: Color(0xFFFFF9F6),
           child: Column(children: [
-            SearchField(text: _text, onSearch: onSearch),
+            SearchField(text: _text, onSearch: (val) => onSearch(val, context)),
             Container(
                 height: 600,
                 child: Consumer<FoodProvider>(

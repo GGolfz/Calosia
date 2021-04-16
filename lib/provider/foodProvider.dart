@@ -21,7 +21,8 @@ class Food {
 
 class FoodProvider with ChangeNotifier {
   List<Food> foodList;
-  FoodProvider({required this.foodList});
+  Food selectedFood;
+  FoodProvider({required this.foodList, required this.selectedFood});
 
   Future<void> fetchFood() async {
     this.foodList = foods;
@@ -43,7 +44,8 @@ class FoodProvider with ChangeNotifier {
     return foodList.any((element) => element.name == name);
   }
 
-  Future<Food> getFoodByName(String name) async {
-    return foodList.firstWhere((element) => element.name == name);
+  Future<void> getFoodByName(String name) async {
+    this.selectedFood = foodList.firstWhere((element) => element.name == name);
+    notifyListeners();
   }
 }
