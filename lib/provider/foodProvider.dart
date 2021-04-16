@@ -30,8 +30,10 @@ class FoodProvider with ChangeNotifier {
   }
 
   Future<void> searchFood(String search) async {
-    final searchList =
-        foods.where((element) => element.name.indexOf(search) != -1).toList();
+    final searchList = foods
+        .where((element) =>
+            element.name.toLowerCase().indexOf(search.toLowerCase()) != -1)
+        .toList();
     if (searchList.length == 0) {
       this.foodList = foods;
     } else {
