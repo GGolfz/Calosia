@@ -46,7 +46,9 @@ class _MainScreenState extends State<MainScreen> {
       String result = response.data['food_results'][0][0] as String;
       result = result.split('(')[0].trim();
       print(result);
-      if (foodList.indexOf(result) != -1) {
+      final foundFood = await Provider.of<FoodProvider>(context, listen: false)
+          .hasFood(result);
+      if (foundFood) {
         Navigator.of(context).pushNamed('/food', arguments: {'detail': result});
       } else {
         showDialog(
@@ -222,8 +224,8 @@ class BottomSheet extends StatelessWidget {
                   final _pickedImage = await imagePicker.getImage(
                     source: ImageSource.gallery,
                     imageQuality: 70,
-                    maxWidth: 600,
-                    maxHeight: 500,
+                    maxWidth: 600.0,
+                    maxHeight: 500.0,
                   );
                   if (_pickedImage != null) {
                     predict(_pickedImage, context);

@@ -39,6 +39,10 @@ class FoodProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> hasFood(String name) async {
+    return foodList.any((element) => element.name == name);
+  }
+
   Future<Food> getFoodByName(String name) async {
     return foodList.firstWhere((element) => element.name == name);
   }
