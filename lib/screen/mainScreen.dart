@@ -96,7 +96,13 @@ class _MainScreenState extends State<MainScreen> {
         Container(
           color: Color(0xFFFFF9F6),
           child: Column(children: [
+            SizedBox(
+              height: 16,
+            ),
             SearchField(text: _text, onSearch: (val) => onSearch(val, context)),
+            SizedBox(
+              height: 8,
+            ),
             Container(
                 height: 600,
                 child: Consumer<FoodProvider>(

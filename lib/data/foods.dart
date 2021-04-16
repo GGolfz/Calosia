@@ -34,7 +34,7 @@ final foods = [
       name: "Pizza",
       imgURL:
           "https://rimage.gnst.jp/livejapan.com/public/article/detail/a/00/00/a0000450/img/basic/a0000450_main.jpg",
-      calories: 266,
+      calories: 2269,
       ingredients: [
         "335ml warm water",
         "1 packet of dry yeast",
@@ -61,5 +61,31 @@ final foods = [
         "Then, stretch and press the dough into a thin round. Make it thinner than you think it should be, as it will slightly shrink and puff up during baking.",
         "Sprinkle semolina onto an upside down baking sheet and place the stretched crust onto it. Add the sauce and ingredients of your choice.",
         "Slide the pizza onto the preheated pizza stone or pan. Bake for 15 minutes, or until the crust and cheese are golden brown."
+      ]),
+  Food(
+      name: "Fried rice",
+      imgURL:
+          "https://hips.hearstapps.com/del.h-cdn.co/assets/17/24/1497458825-delish-shrimp-fried-rice-1-1024.jpg",
+      calories: 456,
+      ingredients: [
+        "2 tbsp vegetable oil",
+        "1 red onion , halved and sliced",
+        "2 garlic cloves , sliced",
+        "1 red chilli , sliced",
+        "250g raw large peeled prawn",
+        "300g cooked rice",
+        "75g frozen pea",
+        "1 tbsp dark soy sauce",
+        "1 tbsp fish sauce",
+        "4 large eggs"
+      ],
+      methods: [
+        "Heat 1 tbsp of the oil in a wok, add the onion, garlic and chilli, and cook for 2-3 mins until golden.",
+        "Add the prawns and cook for 1 min.",
+        "Tip in the rice and peas, and keep tossing until very hot.",
+        "Add the soy and fish sauce, then stir through the chopped coriander.",
+        "Keep warm while you fry the eggs.",
+        "Heat the remaining oil in a frying pan and fry the eggs with some seasoning.",
+        "Divide the fried rice mix between 4 bowls and top each with a fried egg."
       ])
 ];
